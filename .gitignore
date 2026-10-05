@@ -1,22 +1,32 @@
-#密钥环境变量，不上传github
+﻿# 密钥：绝不能提交
 .env
 
-#虚拟环境
+# 虚拟环境
+.venv/
 venv/
-*.pyc
+env/
+
+# Python
 __pycache__/
+*.py[cod]
 *.pyo
+*.egg-info/
+build/
+dist/
 
-#日志
-*.log
-
-#IDE配置
-.vscode/
-.idea/
-
-#图片输出
-assets/*.png
-
-#向量数据库
+# 本地向量索引（首次运行自动重建）
+.chroma/
 chroma_db/
 *.db
+
+# 测试与编辑器
+.pytest_cache/
+.idea/
+.vscode/
+.DS_Store
+
+# 日志
+*.log
+
+# 图片输出
+assets/*.png

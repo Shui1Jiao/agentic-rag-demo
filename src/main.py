@@ -1,4 +1,4 @@
-﻿"""Agentic-RAG Demo：用 LangGraph 状态机实现「自主路由」的检索增强 Agent。
+"""Agentic-RAG Demo：用 LangGraph 状态机实现「自主路由」的检索增强 Agent。
 
 和普通 RAG 的区别：检索前多了一个 judge 节点，由大模型决定这次要走
 检索（rag）、调用工具（tool）还是直接回答（direct），而不是无脑跑一条固定流水线。

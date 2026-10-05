@@ -1,4 +1,4 @@
-﻿"""知识库检索层：语料分块 -> Chroma 建索引 -> 按语义相似度召回。
+"""知识库检索层：语料分块 -> Chroma 建索引 -> 按语义相似度召回。
 
 用 Chroma 自带的默认 embedding（本地 ONNX 版 all-MiniLM-L6-v2），
 所以只跑检索不需要任何 API key，也不需要额外配置 embedding 服务。

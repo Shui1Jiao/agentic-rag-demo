@@ -1,1 +1,1 @@
-﻿"""Agentic-RAG demo package."""
+"""Agentic-RAG demo package."""

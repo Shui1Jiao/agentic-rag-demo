@@ -3,3 +3,7 @@ langchain>=0.3.0
 langchain-openai>=0.2.0
 python-dotenv>=1.0.0
 chromadb>=0.5.0
+
+# 可选：读取 .docx / .pdf 知识文档时需要（缺失时自动跳过该文件）
+python-docx>=1.1
+pypdf>=4.0

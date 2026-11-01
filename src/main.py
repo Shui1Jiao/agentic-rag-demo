@@ -1,7 +1,7 @@
 """Agentic-RAG Demo：用 LangGraph 状态机实现「自主路由」的检索增强 Agent。
 
-和普通 RAG 的区别：检索前多了一个 judge 节点，由大模型决定这次要走
-检索（rag）、调用工具（tool）还是直接回答（direct），而不是无脑跑一条固定流水线。
+和普通 RAG 的区别：检索前多了一个 judge 节点，由大模型决定这次要走检索（rag）、
+调用工具（tool）还是直接回答（direct），而不是无脑跑一条固定流水线。
 
 运行方式（仓库根目录）：
     python -m src.main
@@ -142,7 +142,7 @@ class AgentState(TypedDict, total=False):
 JUDGE_PROMPT = """用户问题：{query}
 
 选择处理方式，只输出一个单词：
-rag：需要知识库（Agentic-RAG、LangGraph、RAG、Chroma、FAISS、Embedding、rerank、幻觉相关）
+rag：需要查知识库（公司制度与流程、产品介绍、技术规范，以及 Agentic-RAG、LangGraph、Chroma、RAG、Embedding、幻觉等概念）
 tool：需要数学计算，或需要获取当前时间
 direct：普通问题，直接回答
 
@@ -200,8 +200,10 @@ def retrieve_node(state: AgentState) -> AgentState:
 
 
 def tool_call_node(state: AgentState) -> AgentState:
-    resp = get_llm().bind_tools(TOOL_SCHEMAS).invoke(
-        [{"role": "user", "content": state["query"]}]
+    resp = (
+        get_llm()
+        .bind_tools(TOOL_SCHEMAS)
+        .invoke([{"role": "user", "content": state["query"]}])
     )
     calls = list(getattr(resp, "tool_calls", None) or [])
     if not calls:
@@ -230,7 +232,9 @@ def answer_node(state: AgentState) -> AgentState:
     if action == "rag":
         if not state.get("context"):
             # 宁可拒答，也不拿空上下文硬编
-            return {"final_answer": "知识库中没有检索到相关内容，无法基于知识库回答这个问题。"}
+            return {
+                "final_answer": "知识库中没有检索到相关内容，无法基于知识库回答这个问题。"
+            }
         prompt = f"""严格依据下面的知识库片段回答问题，禁止编造。
 
 知识库片段：
@@ -239,12 +243,14 @@ def answer_node(state: AgentState) -> AgentState:
 问题：{state["query"]}
 
 要求：只使用上述片段中的信息；如果片段不足以回答，直接说明「知识库中没有足够信息」。
-在结论后用 [来源: 片段编号] 标注依据，例如 [来源: kb#03]。"""
+在结论后用 [来源: 文件名#段号] 标注依据，例如 [来源: 员工手册.md#01]。"""
 
     elif action == "tool":
         if not state.get("tool_result"):
             reason = state.get("tool_error") or "未知原因"
-            return {"final_answer": f"工具调用没有返回可用结果（{reason}），无法给出可靠答案。"}
+            return {
+                "final_answer": f"工具调用没有返回可用结果（{reason}），无法给出可靠答案。"
+            }
         prompt = f"""工具执行结果：
 {state["tool_result"]}
 
@@ -295,9 +301,11 @@ def print_mermaid_graph() -> None:
 
 
 def warm_up_knowledge_base() -> None:
-    print("正在初始化向量库（首次运行需下载 embedding 模型，约 80MB）...")
     kb = get_knowledge_base()
-    print(f"知识库就绪，共 {kb.size} 个片段。")
+    print(
+        f"[知识库] 索引就绪：{kb.size} 条片段，来源 {len(kb.sources)} 个文件"
+        f"（{', '.join(kb.sources) if kb.sources else '无'}）"
+    )
 
 
 # ---------------------- 主入口 ----------------------
@@ -319,7 +327,7 @@ def run_once(query: str) -> AgentState:
 
 
 def main() -> None:
-    print_mermaid_graph()
+    # print_mermaid_graph()
     warm_up_knowledge_base()
     print("\n==== Agentic-RAG，输入 exit 退出 ====")
 

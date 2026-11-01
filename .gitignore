@@ -30,3 +30,10 @@ chroma_db/
 
 # 图片输出
 assets/*.png
+
+# 本地 embedding 模型（体积大，不入库）
+models/
+
+# 覆盖率产物
+.coverage
+htmlcov/
